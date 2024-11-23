@@ -214,9 +214,46 @@ async function updateCharacterData(req, res) {
     }
 }
 
+async function deleteCharacterData(req, res) {
+    const { character_id } = req.params; // Extract character_id from the request parameters
+
+    const client = await db.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        // Check if the character exists
+        const CheckCharacterQuery = `SELECT * FROM odfc.odfc_characters WHERE character_id = $1;`;
+        const characterResult = await client.query(CheckCharacterQuery, [character_id]);
+
+        if (characterResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Character not found' });
+        }
+
+        // Delete the character data
+        const DeleteCharacterQuery = `
+            DELETE FROM odfc.odfc_characters
+            WHERE character_id = $1;
+        `;
+        await client.query(DeleteCharacterQuery, [character_id]);
+
+        await client.query('COMMIT');
+        res.status(200).json({ message: 'Character deleted successfully' });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error during character deletion:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        client.release();
+    }
+}
+
 module.exports = {
     getEndStoreWithComponents,
     getGaugeDataByComponent, 
     characterData,
-    updateCharacterData   
+    updateCharacterData,
+    deleteCharacterData  
 }

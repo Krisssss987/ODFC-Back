@@ -18,4 +18,7 @@ router.post('/addCharacter', data.characterData);
 // put
 router.post('/updateCharacter/:character_id', data.updateCharacterData);
 
+// delete
+router.delete('/deleteCharacter/:character_id', data.deleteCharacterData);
+
 module.exports = router;

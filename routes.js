@@ -10,5 +10,6 @@ router.get('/user', auth.getUserDetails);
 
 // data
 router.get('/allData', data.getEndStoreWithComponents);
+router.get('/gaugeData/:component_id', data.getGaugeDataByComponent);
 
 module.exports = router;

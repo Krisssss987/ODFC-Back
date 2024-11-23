@@ -63,8 +63,32 @@ async function getEndStoreWithComponents(req, res) {
     }
 }
 
+async function getGaugeByComponent(req, res) {
+    const { component_id } = req.params;
+
+    const query = `
+        SELECT * 
+        FROM odfc.odfc_gauge 
+        WHERE component_id = $1;
+    `;
+
+    try {
+        const result = await db.query(query, [component_id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'No gauges found for the given component ID' });
+        }
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
 
 module.exports = {
     getEndStoreWithComponents,
+    getGaugeByComponent,
+
     
 }

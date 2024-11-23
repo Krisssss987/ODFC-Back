@@ -87,7 +87,7 @@ async function getGaugeDataByComponent(req, res) {
 
     const query = `
         SELECT * 
-        FROM odfc.odfc_gauge 
+        FROM odfc.odfc_characters
         WHERE component_id = $1;
     `;
 
@@ -103,7 +103,60 @@ async function getGaugeDataByComponent(req, res) {
     }
 }
 
+async function characterData(req, res) {
+    const {
+        character_name,
+        reference_no,
+        ofdc_gauge_no,
+        remark,
+        other_remark,
+        gauge_type,
+        component_id
+    } = req.body;
+
+    const character_id = uuidv4();
+    const client = await db.connect();
+
+    try {
+        await client.query('BEGIN');
+        const CheckComponentQuery = `SELECT * FROM odfc.odfc_component WHERE component_id = $1;`;
+        const componentResult = await client.query(CheckComponentQuery, [component_id]);
+
+        if (componentResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Component not found' });
+        }
+
+        const InsertCharacterQuery = `
+            INSERT INTO odfc.odfc_characters 
+            (character_id, character_name, reference_no, ofdc_gauge_no, remark, other_remark, gauge_type, component_id) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        `;
+        await client.query(InsertCharacterQuery, [
+            character_id,
+            character_name,
+            reference_no,
+            ofdc_gauge_no,
+            remark,
+            other_remark,
+            gauge_type,
+            component_id
+        ]);
+
+        await client.query('COMMIT');
+        res.status(201).json({ message: 'Character data inserted successfully', character_id });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error during character data insertion:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        client.release();
+    }
+}
+
 module.exports = {
     getEndStoreWithComponents,
-    getGaugeDataByComponent,    
+    getGaugeDataByComponent, 
+    characterData   
 }

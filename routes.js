@@ -13,6 +13,9 @@ router.get('/allData', data.getEndStoreWithComponents);
 router.get('/gaugeData/:component_id', data.getGaugeDataByComponent);
 
 // post
-router.post('/charactersData', data.characterData);
+router.post('/addCharacter', data.characterData);
+
+// put
+router.post('/updateCharacter/:character_id', data.updateCharacterData);
 
 module.exports = router;

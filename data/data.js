@@ -155,8 +155,68 @@ async function characterData(req, res) {
     }
 }
 
+async function updateCharacterData(req, res) {
+    const {
+        character_name,
+        reference_no,
+        ofdc_gauge_no,
+        remark,
+        other_remark,
+        gauge_type
+    } = req.body;
+
+    const { character_id } = req.params;
+
+    const client = await db.connect();
+
+    try {
+        await client.query('BEGIN');
+
+        const CheckCharacterQuery = `SELECT * FROM odfc.odfc_characters WHERE character_id = $1;`;
+        const characterResult = await client.query(CheckCharacterQuery, [character_id]);
+
+        if (characterResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: 'Character not found' });
+        }
+
+        const UpdateCharacterQuery = `
+            UPDATE odfc.odfc_characters
+            SET 
+                character_name = $1,
+                reference_no = $2,
+                ofdc_gauge_no = $3,
+                remark = $4,
+                other_remark = $5,
+                gauge_type = $6
+            WHERE 
+                character_id = $7;
+        `;
+        await client.query(UpdateCharacterQuery, [
+            character_name,
+            reference_no,
+            ofdc_gauge_no,
+            remark,
+            other_remark,
+            gauge_type,
+            character_id
+        ]);
+
+        await client.query('COMMIT');
+        res.status(200).json({ message: 'Character data updated successfully' });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error during character data update:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    } finally {
+        client.release();
+    }
+}
+
 module.exports = {
     getEndStoreWithComponents,
     getGaugeDataByComponent, 
-    characterData   
+    characterData,
+    updateCharacterData   
 }

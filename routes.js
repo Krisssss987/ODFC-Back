@@ -9,16 +9,17 @@ router.post('/login', auth.loginUser);
 router.get('/user', auth.getUserDetails);
 
 // get
-router.get('/allData', data.getEndStoreWithComponents);
-router.get('/gaugeData/:component_id', data.getGaugeDataByComponent);
+router.get('/endStore/:organization_id', data.getEndStoreWithComponentsByOrganization);
+router.get('/getGauges/:organization_id', data.getGaugesWithCharacters);
+router.get('/getAllData/:component_id', data.getDataByComponent);
 
 // post
-router.post('/addCharacter', data.characterData);
+router.post('/addData', data.insertData);
 
 // put
-router.post('/updateCharacter/:character_id', data.updateCharacterData);
+router.post('/updateData/:data_id', data.updateData);
 
 // delete
-router.delete('/deleteCharacter/:character_id', data.deleteCharacterData);
+router.delete('/deleteData/:data_id', data.deleteData);
 
 module.exports = router;

@@ -32,7 +32,7 @@ async function register(req, res) {
 
         const InsertUserQuery = `
             INSERT INTO odfc.odfc_user_info 
-            (user_id, first_name, last_name, personal_email, user_type, password, verified, verification_token,organization_id) 
+            (user_id, first_name, last_name, personal_email, user_type, password, verified, verification_token, organization_id) 
             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);
         `;
         await client.query(InsertUserQuery, [
@@ -66,9 +66,9 @@ async function loginUser(req, res) {
 
     const user = checkUserNameResult.rows[0];
 
-    // if (user.verified === 0) {
-    //   return res.status(401).json({ message: 'User is not verified. Please verify your account.' });
-    // }
+    if (user.verified === 0) {
+      return res.status(401).json({ message: 'User is not verified. Please verify your account.' });
+    }
 
     const passwordCheckResult = await bcrypt.compare(Password, user.password);
     if (!passwordCheckResult) {
@@ -99,7 +99,7 @@ async function getUserDetails(req, res) {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-    const fetchUserQuery = 'SELECT * FROM odfc.odfc_user_info WHERE "personal_email" = $1';
+    const fetchUserQuery = 'SELECT user_id, first_name, last_name, user_type, organization_id  FROM odfc.odfc_user_info WHERE "personal_email" = $1';
 
     const userResult = await db.query(fetchUserQuery, [decodedToken.userName]);
 

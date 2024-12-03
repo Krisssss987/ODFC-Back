@@ -456,6 +456,8 @@ async function getFullGaugeDataForOrganization(req, res) {
                 s.port,
                 s.datatype,
                 s.byte_order,
+                s.registertype,
+                s.speed,
                 sm.register_address,
                 c.characteristic_name,
                 c.characteristic_id

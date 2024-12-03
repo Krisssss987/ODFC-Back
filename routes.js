@@ -24,20 +24,4 @@ router.get('/getReportDataById/:report_id', data.getReportDataById);
 router.get('/getFullGaugeDataForOrganization/:organization_id', data.getFullGaugeDataForOrganization);
 router.get('/getAllReports/:organization_id', data.getFullReportDataForOrganization);
 
-// get
-// router.get('/endStore/:organization_id', data.getEndStoreWithComponentsByOrganization);
-// router.get('/getGauges/:organization_id', data.getGaugesWithCharacters);
-// router.get('/getAllData/:component_id', data.getDataByComponent);
-
-
-
-// // post
-// router.post('/addData', data.insertData);
-
-// // put
-// router.post('/updateData/:data_id', data.updateData);
-
-// // delete
-// router.delete('/deleteData/:data_id', data.deleteData);
-
 module.exports = router;

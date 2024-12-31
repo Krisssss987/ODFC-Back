@@ -96,6 +96,7 @@ async function addComponent(req, res) {
 }
 
 async function addGauge(req, res) {
+    console.log("Add Guage Called!")
     const { gauge_name, gauge_odfc_id, organization_id } = req.body;
 
     // Generate a new UUID for the gauge
@@ -391,7 +392,9 @@ async function getGaugesForOrganization(req, res) {
                 g.gauge_id as value,
                 g.gauge_odfc_id as ofdcGaugeNo,
                 c.characteristic_name as characteristic_name,
-                c.characteristic_id as characteristic_value
+                c.characteristic_id as characteristic_value,
+                c.actual_value as refer_value,
+                c.tolerance_value as tolerence
             FROM odfc.odfc_gauge g
             LEFT JOIN odfc.odfc_characteristics c ON g.gauge_id = c.gauge_id
             WHERE g.organization_id = $1;
@@ -411,13 +414,15 @@ async function getGaugesForOrganization(req, res) {
                 existingGauge.characteristics.push({
                     name: row.characteristic_name,
                     value: row.characteristic_value,
+                    refer_value: row.refer_value,
+                    tolerence: row.tolerence
                 });
             } else {
                 acc.push({
                     name: row.name,
                     value: row.value,
                     characteristics: [
-                        { name: row.characteristic_name, value: row.characteristic_value },
+                        { name: row.characteristic_name, value: row.characteristic_value, refer_value: row.refer_value, tolerence: row.tolerence },
                     ],
                     ofdcGaugeNo: row.ofdcgaugeno,
                 });

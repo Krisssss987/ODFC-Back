@@ -502,7 +502,9 @@ async function insertReport(req, res) {
         lotNo,
         heatBatchNo,
         offeredQuantity,
-        sampleQuantity
+        sampleQuantity,
+        misNo,
+        supplierName
     } = req.body;
 
     // Generate a new UUID for the report_id
@@ -533,9 +535,9 @@ async function insertReport(req, res) {
         const insertReportQuery = `
             INSERT INTO odfc.odfc_report 
             (report_id, user_id, end_store_id, sin_no, lot_no, heat_batch_no, offered_quantity, 
-            sample_quantity, organization_id, report_data, component_id) 
+            sample_quantity, organization_id, report_data, component_id, mis_no, supplier_name) 
             VALUES 
-            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
         `;
         await client.query(insertReportQuery, [
             report_id,
@@ -546,9 +548,11 @@ async function insertReport(req, res) {
             heatBatchNo,
             offeredQuantity,
             sampleQuantity,
-            organization_id,  // Assuming this is the organization_id as well
+            organization_id,
             JSON.stringify(reportData),
-            component
+            component,
+            misNo,
+            supplierName
         ]);
 
         await client.query('COMMIT');  // Commit the transaction

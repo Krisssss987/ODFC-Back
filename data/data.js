@@ -582,6 +582,8 @@ async function getFullReportDataForOrganization(req, res) {
                 r.report_id,
                 r.created_at,
                 r.sin_no,
+                r.mis_no,
+                r.supplier_name,
                 e.end_store_name,
                 c.component_name,
                 u.first_name || ' ' || u.last_name AS user_name  -- Concatenating first and last name

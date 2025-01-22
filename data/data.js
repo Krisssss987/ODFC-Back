@@ -630,6 +630,8 @@ async function getReportDataById(req, res) {
                 r.report_id,
                 r.created_at,
                 r.sin_no,
+                r.mis_no,
+                r.supplier_name,
                 r.lot_no,
                 r.heat_batch_no,
                 r.offered_quantity,
